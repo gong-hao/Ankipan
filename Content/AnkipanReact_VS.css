@@ -1,0 +1,44 @@
+﻿body {
+    background-image: url('/Images/bg.png');
+    color: #ccc;
+}
+
+#ankipan {
+    position: absolute;
+    top: 100px;
+    right: 60px;
+    bottom: 220px;
+    left: 60px;
+}
+
+.form-control, .well {
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+    .form-control:focus {
+        border: none;
+        border-radius: 0;
+        box-shadow: none;
+    }
+
+hr {
+    border-color: #333;
+}
+
+::-webkit-scrollbar {
+    width: 5px;
+}
+
+::-webkit-scrollbar-track {
+    background-color: #333;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #666;
+}
+
+::-webkit-scrollbar-button {
+    background-color: #222;
+}
