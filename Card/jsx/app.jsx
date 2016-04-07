@@ -520,6 +520,13 @@
                         <button className="btn" onClick={this._toggleProp.bind(this, 'IsShowChartBasic')}>釋義常用度</button>
                         <button className="btn" onClick={this._toggleProp.bind(this, 'IsChartExamples')}>詞性常用度</button>
                         <button className="btn" onClick={this._archive}>{this.props.Current.Archive ? 'Unarchiver' : 'Archive'}</button>
+						<a className="btn" target="_blank" href={'https://www.vocabulary.com/dictionary/' + this.props.Current.Word}>vocabulary</a>
+						<a className="btn" target="_blank" href={'http://learnersdictionary.com/definition/' + this.props.Current.Word}>learnersdictionary</a>
+						<a className="btn" target="_blank" href={'http://www.ldoceonline.com/search/?q=' + this.props.Current.Word}>ldoceonline</a>
+						<a className="btn" target="_blank" href={'http://www.dictionary.com/browse/' + this.props.Current.Word}>dictionary</a>
+						<a className="btn" target="_blank" href={'http://www.ozdic.com/collocation-dictionary/' + this.props.Current.Word}>ozdic</a>
+						<a className="btn" target="_blank" href={'http://www.thesaurus.com/browse/' + this.props.Current.Word}>thesaurus</a>
+						<a className="btn" target="_blank" href={'http://dict.cn/big5/' + this.props.Current.Word}>dict</a>
                         <br />
                         Pronunciation :<br />
                         <button className={cx({ btn : true, 'btn-positive' : this.props.Current.Pronunciation === 5 })} onClick={this._degree.bind(this, 1, 5)}>5</button>
