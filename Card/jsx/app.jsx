@@ -309,7 +309,7 @@
                 'http://www.dictionary.com/browse/',
                 'http://www.ozdic.com/collocation-dictionary',
                 'http://www.thesaurus.com/browse/',
-                'http://dict.cn/big5'
+                'http://dict.cn/big5/'
             ].forEach(function(val, key) {
                 var url = val + word;
 
