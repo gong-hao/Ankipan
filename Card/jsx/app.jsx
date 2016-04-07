@@ -300,6 +300,8 @@
             //});
         },
         _openAllLinks: function() {
+            var word = this.props.Current.Word;
+
             [
                 'http://learnersdictionary.com/definition/',
                 'http://www.ldoceonline.com/search/?q=',
@@ -309,7 +311,7 @@
                 'http://www.thesaurus.com/browse/',
                 'http://dict.cn/big5'
             ].forEach(function(val, key) {
-                var url = val + this.props.Current.Word;
+                var url = val + word;
 
                 window.open(url);
             });
