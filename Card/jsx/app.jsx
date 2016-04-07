@@ -307,7 +307,7 @@
                 'http://www.ldoceonline.com/search/?q=',
                 'https://www.vocabulary.com/dictionary/',
                 'http://www.dictionary.com/browse/',
-                'http://www.ozdic.com/collocation-dictionary',
+                'http://www.ozdic.com/collocation-dictionary/',
                 'http://www.thesaurus.com/browse/',
                 'http://dict.cn/big5/'
             ].forEach(function(val, key) {
