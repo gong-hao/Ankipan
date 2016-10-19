@@ -51,7 +51,7 @@
         stop: function () {
             audio.pause();
         },
-        voice: 'SSU'
+        voice: 'usenglishfemale'
     };
 
     function audioPlay(sentence, callback) {

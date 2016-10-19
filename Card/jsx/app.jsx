@@ -1,7 +1,26 @@
-﻿(function() {
+﻿(function () {
     'use strict';
 
-    $(window).keydown(function(e) {
+    var dictionarys = [
+        { name: '劍橋', url: 'http://dictionary.cambridge.org/zht/詞典/英語-漢語-繁體/' },
+        { name: '雅虎', url: 'https://tw.dictionary.yahoo.com/dictionary?p=' },
+        { name: '海詞', url: 'http://dict.cn/big5/' },
+        { name: '爱词霸', url: 'http://www.iciba.com/' },
+        { name: 'cambridge', url: 'http://dictionary.cambridge.org/dictionary/english/' },
+        { name: 'dictionary', url: 'http://www.dictionary.com/browse/' },
+        { name: 'merriam-webster', url: 'http://www.merriam-webster.com/dictionary/' },
+        { name: 'longman', url: 'http://www.ldoceonline.com/search/?q=' },
+        { name: 'oxford', url: 'http://www.oxforddictionaries.com/definition/american_english/' },
+        { name: 'macmillan', url: 'http://www.macmillandictionary.com/dictionary/british/' },
+        { name: 'oxford learner\'s', url: 'http://www.oxfordlearnersdictionaries.com/us/definition/american_english/' },
+        { name: 'collins', url: 'http://www.collinsdictionary.com/dictionary/english/' },
+        { name: 'the free dictionary', url: 'http://www.thefreedictionary.com/' },
+        { name: 'vocabulary', url: 'https://www.vocabulary.com/dictionary/' },
+        { name: 'synonyms', url: ' http://www.thesaurus.com/browse/' },
+        { name: 'google image', url: 'https://www.google.com/search?tbm=isch&q=' }
+    ];
+
+    $(window).keydown(function (e) {
         var key = checkCode(e);
 
         if (key.isCtrl) core.isCtrlDown = true;
@@ -13,16 +32,21 @@
         if (key.isDown) cardEntity._toggleProp('IsShowWord');
         if (key.isRight) cardEntity._move(1);
 
+		if (key.isEnter) cardEntity._move(1);
+
         if (key.isCtrl) cardEntity._speak();
-        if (key.isTilde) cardEntity._speak('SSU');
-        if (key.is1) cardEntity._speak('google');
-        if (key.is2) cardEntity._speak('usenglishfemale');
-        if (key.is3) cardEntity._speak('usenglishmale');
-        if (key.is4) cardEntity._speak('ukenglishfemale');
-        if (key.is5) cardEntity._speak('ukenglishmale');
+        if (key.is1) cardEntity._speak('usenglishfemale');
+        if (key.is2) cardEntity._speak('usenglishmale');
+        if (key.is3) cardEntity._speak('ukenglishfemale');
+        if (key.is4) cardEntity._speak('ukenglishmale');
+        if (key.is5) cardEntity._speak('SSU');
+
+		if (key.isF9) cardEntity._shuffle();
+
+        if (key.isEsc) cardEntity._archive();
     });
 
-    $(window).keyup(function(e) {
+    $(window).keyup(function (e) {
         var key = checkCode(e);
 
         if (key.isCtrl) core.isCtrlDown = false;
@@ -32,6 +56,7 @@
 
     function checkCode(e) {
         return {
+		    isEnter: e.keyCode === 13,
             isF2: e.keyCode === 113,
             isF9: e.keyCode === 120,
             isF10: e.keyCode === 121,
@@ -59,21 +84,21 @@
     function getMode() {
         if (!core.mode) {
             return {
-                isShowImage: true,
                 isShowWord: true,
                 isShowExplain: true
-            }
+            };
         }
 
-        return {
-            isShowImage: core.mode.indexOf('i') !== -1,
+        var mode = {
             isShowWord: core.mode.indexOf('w') !== -1,
             isShowExplain: core.mode.indexOf('e') !== -1
-        }
+        };
+
+        return mode;
     }
 
     var Pi = React.createClass({
-        componentDidUpdate: function(prevProps) {
+        componentDidUpdate: function (prevProps) {
             if (!this.props.data) return false;
 
             if (prevProps.word === this.props.word) return false;
@@ -103,7 +128,7 @@
 
             piChart.setOption(option);
         },
-        render: function() {
+        render: function () {
             return (
                 <div style={{ 'textAlign': 'center' }}>
                     <div ref="pi" style={{ width: 360, height: 360, display: 'inline-block' }}></div>
@@ -112,47 +137,47 @@
         }
     });
 
-    var Avatars = React.createClass({
-        render: function() {
-            var isNeedShow = this.props.Current && this.props.Current.Avatars && this.props.Current.Avatars.length > 0;
+    // var Avatars = React.createClass({
+    //     render: function () {
+    //         var isNeedShow = this.props.Current && this.props.Current.Avatars && this.props.Current.Avatars.length > 0;
 
-            if (!isNeedShow) return false;
+    //         if (!isNeedShow) return false;
 
-            return (
-                <div style={{ 'display': (this.props.IsShowImage ? 'block' : 'none') }}>
-                    <div className="avatar-area">
-                        <ul className="avatar-list">
-                            {this.props.Current.Avatars.map(function(ava, key) {
-                                return (
-                                    <li className="avatar-item" key={'avatar-' + key}>
-                                        <img src={ava.Src} />
-                                    </li>
-                                );
-                            }, this) }
-                        </ul>
-                    </div>
-                    <hr />
-                </div>
-            );
-        }
-    });
+    //         return (
+    //             <div style={{ 'display': (this.props.IsShowImage ? 'block' : 'none') }}>
+    //                 <div className="avatar-area">
+    //                     <ul className="avatar-list">
+    //                         {this.props.Current.Avatars.map(function(ava, key) {
+    //                             return (
+    //                                 <li className="avatar-item" key={'avatar-' + key}>
+    //                                     <img src={ava.Src} />
+    //                                 </li>
+    //                             );
+    //                         }, this)}
+    //                     </ul>
+    //                 </div>
+    //                 <hr />
+    //             </div>
+    //         );
+    //     }
+    // });
 
     var DifficultyIndex = React.createClass({
-        getDifficultyColor: function(index) {
+        getDifficultyColor: function (index) {
             if (index >= 0 && index <= 20) return '#ffffff';
             if (index > 20 && index <= 40) return '#1eff00';
             if (index > 40 && index <= 60) return '#0081ff';
             if (index > 60 && index <= 80) return '#c600ff';
             if (index > 80 && index <= 100) return '#ff8000';
         },
-        getDifficultyName: function(index) {
+        getDifficultyName: function (index) {
             if (index > 0 && index <= 20) return '普通';
             if (index > 20 && index <= 40) return '優秀';
             if (index > 40 && index <= 60) return '精良';
             if (index > 60 && index <= 80) return '史詩';
             if (index > 80 && index <= 100) return '傳奇';
         },
-        render: function() {
+        render: function () {
             var isNeedShow = this.props.Current;
 
             if (!isNeedShow) return false;
@@ -163,7 +188,7 @@
                         <span style={{ width: (this.props.Current.DifficultyIndex || 0) + '%' }} className="rating"></span>
                     </div>
                     <span className="badge word-diff" style={{ backgroundColor: '#000', color: this.getDifficultyColor(this.props.Current.DifficultyIndex) }}>
-                        {this.props.Current.DifficultyIndex || '??'} 等 {this.getDifficultyName(this.props.Current.DifficultyIndex) } 單字
+                        LV. {this.props.Current.DifficultyIndex || '??'}
                     </span>
                 </div>
             );
@@ -171,7 +196,7 @@
     });
 
     var Tester = React.createClass({
-        _testChange: function(e) {
+        _testChange: function (e) {
             if (!this.props.Current.TestWord) {
                 this.props.Current.TestWord = '';
             }
@@ -205,9 +230,9 @@
             });
         },
 
-        render: function() {
+        render: function () {
             return (
-                <div style={{ 'display': (this.props.IsShowTestWord ? 'block' : 'none') }}>
+                <div>
                     <h2 style={{ 'textAlign': 'center', 'color': this.props.Current.TestWordColor }}>
                         {this.props.Current.TestWord}
                     </h2>
@@ -221,7 +246,7 @@
 
 
     var Card = React.createClass({
-        _changeAvatar: function(index) {
+        _changeAvatar: function (index) {
             for (var i = 0; i < this.props.Current.Avatars.length; i++) {
                 var avatar = this.props.Current.Avatars[i];
 
@@ -232,7 +257,7 @@
                 Current: this.props.Current
             })
         },
-        _appendWordsProp: function(words) {
+        _appendWordsProp: function (words) {
             for (var i = 0; i < words.length; i++) {
                 var word = words[i];
 
@@ -245,14 +270,14 @@
 
             return words;
         },
-        _speak: function(voice) {
+        _speak: function (voice) {
             if (voice) {
                 core.speaker.voice = voice;
             }
 
             core.speaker.say(this.props.Current.Word);
         },
-        _move: function(val) {
+        _move: function (val) {
             var index = this.props.Index + val;
 
             var topIndex = 0;
@@ -272,7 +297,6 @@
                 var mode = getMode();
 
                 this.setProps({
-                    IsShowImage: mode.isShowImage,
                     IsShowWord: mode.isShowWord,
                     IsShowExplain: mode.isShowExplain,
                     Index: index,
@@ -280,7 +304,7 @@
                 });
 
                 if (core.isAutoSpeak) {
-                    setTimeout(function() {
+                    setTimeout(function () {
                         this._speak(core.speaker.voice);
                     }.bind(this));
                 }
@@ -288,103 +312,97 @@
                 location.href = '#' + (index + 1);
             }
         },
-        _archive: function() {
-            //$.ajax({
-            //    url: '/Api/Cihais/Archive?cihaiId=' + this.props.Current.CihaiId,
-            //    type: 'POST',
-            //    success: function () {
-            //        this.props.Current.Archive = !this.props.Current.Archive;
-            //
-            //        this.setProps(this.props);
-            //    }.bind(this)
-            //});
-        },
-        _openAllLinks: function() {
-            var word = this.props.Current.Word;
+		_shuffle: function () {
+			var words = _.shuffle(this.props.Words);
+			var index = this._getIndex();
+			this.setProps({
+				Current: words[index],
+                Words: words
+            });
+		},
+        _archive: function () {
+            $.ajax({
+                url: '/Api/Cihais/Archive?cihaiId=' + this.props.Current.CihaiId,
+                type: 'POST',
+                success: function () {
+                    this.props.Current.Archive = !this.props.Current.Archive;
 
-            [
-                'http://learnersdictionary.com/definition/',
-                'http://www.ldoceonline.com/search/?q=',
-                'https://www.vocabulary.com/dictionary/',
-                'http://www.dictionary.com/browse/',
-                'http://www.ozdic.com/collocation-dictionary/',
-                'http://www.thesaurus.com/browse/',
-                'http://dict.cn/big5/'
-            ].forEach(function(val, key) {
-                var url = val + word;
-
-                window.open(url);
+                    this.setProps(this.props);
+                }.bind(this)
             });
         },
-        _toggleProp: function(propName) {
+        _toggleProp: function (propName) {
             var props = {};
 
             props[propName] = !this.props[propName];
 
             this.setProps(props);
         },
-        _degree: function(type, degree) {
-            //$.ajax({
-            //    url: '/Api/Cihais/Degree?cihaiId=' + this.props.Current.CihaiId + '&type=' + type + '&degree=' + degree,
-            //    type: 'POST',
-            //    success: function () {
-            //        switch (type)
-            //        {
-            //            case 1:
-            //                this.props.Current.Pronunciation = degree;
-            //
-            //                break;
-            //
-            //            case 2:
-            //                this.props.Current.Spelling = degree;
-            //                break;
-            //
-            //            case 3:
-            //                this.props.Current.Meaning = degree;
-            //                break;
-            //
-            //            default:
-            //                break;
-            //        }
-            //
-            //        this.setProps(this.props);
-            //    }.bind(this)
-            //});
+        _degree: function (type, degree) {
+            $.ajax({
+                url: '/Api/Cihais/Degree?cihaiId=' + this.props.Current.CihaiId + '&type=' + type + '&degree=' + degree,
+                type: 'POST',
+                success: function () {
+                    switch (type) {
+                        case 1:
+                            this.props.Current.Pronunciation = degree;
+
+                            break;
+
+                        case 2:
+                            this.props.Current.Spelling = degree;
+                            break;
+
+                        case 3:
+                            this.props.Current.Meaning = degree;
+                            break;
+
+                        default:
+                            break;
+                    }
+
+                    this.setProps(this.props);
+                }.bind(this)
+            });
         },
-        componentDidMount: function() {
+		_getIndex: function () {
+			var index = 0;
+
+			if (location.hash) {
+				var hashVal = location.hash.replace('#', '');
+
+				var isNumber = new RegExp(/\d/).test(hashVal);
+
+				if (isNumber) {
+					index = hashVal - 1;
+				} else {
+					index = _.findIndex(words, function (x) {
+						return x.Word === hashVal;
+					});
+
+					index = index === -1 ? 0 : index;
+				}
+			}
+
+			return index;
+		},
+        componentDidMount: function () {
             if (!core.groupName) {
                 return false;
             }
 
             $.ajax({
-                url: 'Json/' + core.groupName + '.json',
+                url: '/Api/Cihais/GetGroup?groupName=' + core.groupName + '&isIncludeArchive=' + core.isIncludeArchive,
                 type: 'GET',
-                success: function(data) {
+                success: function (data) {
                     if (data && data.length > 0) {
                         var words = this._appendWordsProp(data);
 
-                        var index = 0;
-
-                        if (location.hash) {
-                            var hashVal = location.hash.replace('#', '');
-
-                            var isNumber = new RegExp(/\d/).test(hashVal);
-
-                            if (isNumber) {
-                                index = hashVal - 1;
-                            } else {
-                                index = _.findIndex(words, function(x) {
-                                    return x.Word === hashVal;
-                                });
-
-                                index = index === -1 ? 0 : index;
-                            }
-                        }
+                        var index = this._getIndex();
 
                         var mode = getMode();
 
                         this.setProps({
-                            IsShowImage: mode.isShowImage,
                             IsShowWord: mode.isShowWord,
                             IsShowExplain: mode.isShowExplain,
                             Index: index,
@@ -392,7 +410,7 @@
                             Words: words
                         });
 
-                        setTimeout(function() {
+                        setTimeout(function () {
 
                             if (core.isAutoSpeak) {
                                 this._speak(core.speaker.voice);
@@ -405,23 +423,24 @@
                 }.bind(this)
             });
         },
-        getDefaultProps: function() {
+        getDefaultProps: function () {
             return {
-                IsShowImage: true,
+                //IsShowImage: true,
                 IsShowWord: true,
                 IsShowExplain: true,
                 IsShowSyllable: true,
                 IsShowDifficultyIndex: true,
-                IsShowSpeakBtn: false,
-                IsShowTestWord: false,
-                IsShowChartBasic: false,
-                IsChartExamples: false,
+                //IsShowSpeakBtn: true,
+                //IsShowTestWord: true,
+                IsShowChartBasic: true,
+                IsShowChartExamples: true,
+                IsShowFunction: false,
                 Index: 0,
                 Current: {},
                 Words: []
             };
         },
-        render: function() {
+        render: function () {
             if (!this.props.Current) return false;
 
             var btnStyle = {
@@ -442,10 +461,10 @@
             var explanations;
 
             if (this.props.Current.Explanations) {
-                explanations = this.props.Current.Explanations.map(function(exp, key) {
+                explanations = this.props.Current.Explanations.map(function (exp, key) {
                     return (
                         <div key={'explanation' + key}>
-                            <span className="badge badge-primary" onClick={this._toggleProp.bind(this, 'IsHide' + exp.Source) }>{exp.Source}</span>
+                            <span className="badge badge-primary" onClick={this._toggleProp.bind(this, 'IsHide' + exp.Source)}>{exp.Source}</span>
                             <pre style={{ 'display': (this.props['IsHide' + exp.Source] ? 'none' : 'block') }}>{exp.Explanation}</pre>
                         </div>
                     );
@@ -460,26 +479,24 @@
                         </h1>
                     </header>
                     <nav className="bar bar-tab">
-                        <a className="tab-item" href="javascript: void(0)" onClick={this._move.bind(this, -1) }>
+                        <a className="tab-item" href="javascript: void(0)" onClick={this._move.bind(this, -1)}>
                             Prev
                         </a>
-                        <a className="tab-item" href="javascript: void(0)" onClick={this._toggleProp.bind(this, 'IsShowWord') }>
+                        <a className="tab-item" href="javascript: void(0)" onClick={this._toggleProp.bind(this, 'IsShowWord')}>
                             Word
                         </a>
-                        <a className="tab-item" href="javascript: void(0)" onClick={this._toggleProp.bind(this, 'IsShowImage') }>
-                            Image
+                        <a className="tab-item" href="javascript: void(0)" onClick={this._toggleProp.bind(this, 'IsShowFunction')}>
+                            Function
                         </a>
-                        <a className="tab-item" href="javascript: void(0)" onClick={this._toggleProp.bind(this, 'IsShowExplain') }>
+                        <a className="tab-item" href="javascript: void(0)" onClick={this._toggleProp.bind(this, 'IsShowExplain')}>
                             Explain
                         </a>
-                        <a className="tab-item" href="javascript: void(0)" onClick={this._move.bind(this, 1) }>
+                        <a className="tab-item" href="javascript: void(0)" onClick={this._move.bind(this, 1)}>
                             Next
                         </a>
                     </nav>
                     <div className="content" style={{ 'padding': '54px 10px 60px 10px', 'lineHeight': '1.5em' }}>
-                        <Avatars Current={this.props.Current} IsShowImage={this.props.IsShowImage} />
-                        <Tester Current={this.props.Current} IsShowTestWord={this.props.IsShowTestWord} />
-                        <div style={{ 'visibility': (this.props.IsShowWord ? 'visible' : 'hidden') }}>
+                        <div style={{ 'visibility': (this.props.IsShowWord ? 'visible' : 'hidden'), 'color': (this.props.Current.Archive ? 'DarkGray' : 'Black') }}>
                             <h2 style={{ 'textAlign': 'center' }}>
                                 {this.props.Current.Word}
                             </h2>
@@ -493,79 +510,70 @@
                                 <DifficultyIndex Current={this.props.Current} />
                             </h5>
                         </div>
-                        <div style={{ 'textAlign': 'center', 'display': (this.props.IsShowSpeakBtn ? 'block' : 'none') }}>
-                            <button className="btn" onClick={this._speak.bind(this, 'SSU') }>
-                                SSU
-                            </button>
-                            {' '}
-                            <button className="btn" onClick={this._speak.bind(this, 'google') }>
-                                谷歌
-                            </button>
-                            {' '}
-                            <button className="btn" onClick={this._speak.bind(this, 'usenglishfemale') }>
-                                美-女
-                            </button>
-                            {' '}
-                            <button className="btn" onClick={this._speak.bind(this, 'usenglishmale') }>
-                                美-男
-                            </button>
-                            {' '}
-                            <button className="btn" onClick={this._speak.bind(this, 'ukenglishfemale') }>
-                                英-女
-                            </button>
-                            {' '}
-                            <button className="btn" onClick={this._speak.bind(this, 'ukenglishmale') }>
-                                英-男
-                            </button>
+                        <div style={{ 'display': (this.props.IsShowFunction ? 'block' : 'none') }}>
+                            <div style={{ 'textAlign': 'center' }}>
+                                <button className="btn" onClick={this._speak.bind(this, 'usenglishfemale')}>
+                                    US-F
+                                </button>
+                                <button className="btn" onClick={this._speak.bind(this, 'usenglishmale')}>
+                                    US-M
+                                </button>
+                                <button className="btn" onClick={this._speak.bind(this, 'ukenglishfemale')}>
+                                    UK-F
+                                </button>
+                                <button className="btn" onClick={this._speak.bind(this, 'ukenglishmale')}>
+                                    UK-N
+                                </button>
+                                <button className="btn" onClick={this._speak.bind(this, 'SSU')}>
+                                    SSU
+                                </button>
+                            </div>
+                            <div style={{ 'textAlign': 'center', 'display': 'block' }}>
+                                <button className={cx({ btn: true, 'btn-positive': this.props.Current.Pronunciation === 5 })} onClick={this._degree.bind(this, 1, 5)}>P5</button>
+                                <button className={cx({ btn: true, 'btn-positive': this.props.Current.Pronunciation === 4 })} onClick={this._degree.bind(this, 1, 4)}>P4</button>
+                                <button className={cx({ btn: true, 'btn-positive': this.props.Current.Pronunciation === 3 })} onClick={this._degree.bind(this, 1, 3)}>P3</button>
+                                <button className={cx({ btn: true, 'btn-positive': this.props.Current.Pronunciation === 2 })} onClick={this._degree.bind(this, 1, 2)}>P2</button>
+                                <button className={cx({ btn: true, 'btn-positive': this.props.Current.Pronunciation === 1 })} onClick={this._degree.bind(this, 1, 1)}>P1</button>
+                                <br />
+                                <button className={cx({ btn: true, 'btn-positive': this.props.Current.Meaning === 5 })} onClick={this._degree.bind(this, 3, 5)}>M5</button>
+                                <button className={cx({ btn: true, 'btn-positive': this.props.Current.Meaning === 4 })} onClick={this._degree.bind(this, 3, 4)}>M4</button>
+                                <button className={cx({ btn: true, 'btn-positive': this.props.Current.Meaning === 3 })} onClick={this._degree.bind(this, 3, 3)}>M3</button>
+                                <button className={cx({ btn: true, 'btn-positive': this.props.Current.Meaning === 2 })} onClick={this._degree.bind(this, 3, 2)}>M2</button>
+                                <button className={cx({ btn: true, 'btn-positive': this.props.Current.Meaning === 1 })} onClick={this._degree.bind(this, 3, 1)}>M1</button>
+                                <br />
+                                <button className={cx({ btn: true, 'btn-positive': this.props.Current.Spelling === 5 })} onClick={this._degree.bind(this, 2, 5)}>S5</button>
+                                <button className={cx({ btn: true, 'btn-positive': this.props.Current.Spelling === 4 })} onClick={this._degree.bind(this, 2, 4)}>S4</button>
+                                <button className={cx({ btn: true, 'btn-positive': this.props.Current.Spelling === 3 })} onClick={this._degree.bind(this, 2, 3)}>S3</button>
+                                <button className={cx({ btn: true, 'btn-positive': this.props.Current.Spelling === 2 })} onClick={this._degree.bind(this, 2, 2)}>S2</button>
+                                <button className={cx({ btn: true, 'btn-positive': this.props.Current.Spelling === 1 })} onClick={this._degree.bind(this, 2, 1)}>S1</button>
+                                <br />
+                                <button className={cx({ btn: true, 'btn-positive': this.props.Current.Archive })} onClick={this._archive}>{this.props.Current.Archive ? 'Unarchiver' : 'Archive'}</button>
+                            </div>
+                            <Tester Current={this.props.Current} />
+                            {dictionarys.map(function (dictionary, key) {
+                                return (
+                                    <span key={dictionary.name}>
+                                        <a className="badge badge-info" target="_blank" href={dictionary.url + this.props.Current.Word}>{dictionary.name}</a>
+                                    </span>
+                                );
+                            }, this) }
                         </div>
                         <hr />
                         <div style={{ 'display': (this.props.IsShowExplain ? 'block' : 'none') }}>
                             {explanations}
+                            <div>
+                                <span className="badge badge-primary" onClick={this._toggleProp.bind(this, 'IsShowChartBasic')}>Explain Ratio</span>
+                                <div style={{ 'display': (this.props.IsShowChartBasic ? 'block' : 'none') }}>
+                                    <Pi data={this.props.Current.ChartBasic} word={this.props.Current.Word} />
+                                </div>
+                            </div>
+                            <div>
+                                <span className="badge badge-primary" onClick={this._toggleProp.bind(this, 'IsShowChartExamples')}>Part of Speech Ratio</span>
+                                <div style={{ 'display': (this.props.IsShowChartExamples ? 'block' : 'none') }}>
+                                    <Pi data={this.props.Current.ChartExamples} word={this.props.Current.Word} />
+                                </div>
+                            </div>
                         </div>
-                        <div style={{ 'display': (this.props.IsShowChartBasic ? 'block' : 'none') }}>
-                            <span className="badge badge-primary">釋義常用度</span>
-                            <Pi data={this.props.Current.ChartBasic} word={this.props.Current.Word} />
-                        </div>
-                        <div style={{ 'display': (this.props.IsChartExamples ? 'block' : 'none') }}>
-                            <span className="badge badge-primary">詞性常用度</span>
-                            <Pi data={this.props.Current.ChartExamples} word={this.props.Current.Word} />
-                        </div>
-                        <button className="btn" onClick={this._toggleProp.bind(this, 'IsShowTestWord') }>Tester</button>
-                        <button className="btn" onClick={this._toggleProp.bind(this, 'IsShowSyllable') }>Syllable</button>
-                        <button className="btn" onClick={this._toggleProp.bind(this, 'IsShowDifficultyIndex') }>Difficulty Index</button>
-                        <button className="btn" onClick={this._toggleProp.bind(this, 'IsShowSpeakBtn') }>Speak button</button>
-                        <button className="btn" onClick={this._toggleProp.bind(this, 'IsShowChartBasic') }>釋義常用度</button>
-                        <button className="btn" onClick={this._toggleProp.bind(this, 'IsChartExamples') }>詞性常用度</button>
-                        <button className="btn" onClick={this._archive}>{this.props.Current.Archive ? 'Unarchiver' : 'Archive'}</button>
-                        <a className="btn" target="_blank" href={'http://learnersdictionary.com/definition/' + this.props.Current.Word}>learnersdictionary</a>
-                        <a className="btn" target="_blank" href={'http://www.ldoceonline.com/search/?q=' + this.props.Current.Word}>ldoceonline</a>
-                        <a className="btn" target="_blank" href={'https://www.vocabulary.com/dictionary/' + this.props.Current.Word}>vocabulary</a>
-                        <a className="btn" target="_blank" href={'http://www.dictionary.com/browse/' + this.props.Current.Word}>dictionary</a>
-                        <a className="btn" target="_blank" href={'http://www.ozdic.com/collocation-dictionary/' + this.props.Current.Word}>ozdic</a>
-                        <a className="btn" target="_blank" href={'http://www.thesaurus.com/browse/' + this.props.Current.Word}>thesaurus</a>
-                        <a className="btn" target="_blank" href={'http://dict.cn/big5/' + this.props.Current.Word}>dict</a>
-                        <button className="btn" onClick={this._openAllLinks}>All links</button>
-                        <br />
-                        Pronunciation: <br />
-                        <button className={cx({ btn: true, 'btn-positive': this.props.Current.Pronunciation === 5 }) } onClick={this._degree.bind(this, 1, 5) }>5</button>
-                        <button className={cx({ btn: true, 'btn-positive': this.props.Current.Pronunciation === 4 }) } onClick={this._degree.bind(this, 1, 4) }>4</button>
-                        <button className={cx({ btn: true, 'btn-positive': this.props.Current.Pronunciation === 3 }) } onClick={this._degree.bind(this, 1, 3) }>3</button>
-                        <button className={cx({ btn: true, 'btn-positive': this.props.Current.Pronunciation === 2 }) } onClick={this._degree.bind(this, 1, 2) }>2</button>
-                        <button className={cx({ btn: true, 'btn-positive': this.props.Current.Pronunciation === 1 }) } onClick={this._degree.bind(this, 1, 1) }>1</button>
-                        <br />
-                        Spelling: <br />
-                        <button className={cx({ btn: true, 'btn-positive': this.props.Current.Spelling === 5 }) } onClick={this._degree.bind(this, 2, 5) }>5</button>
-                        <button className={cx({ btn: true, 'btn-positive': this.props.Current.Spelling === 4 }) } onClick={this._degree.bind(this, 2, 4) }>4</button>
-                        <button className={cx({ btn: true, 'btn-positive': this.props.Current.Spelling === 3 }) } onClick={this._degree.bind(this, 2, 3) }>3</button>
-                        <button className={cx({ btn: true, 'btn-positive': this.props.Current.Spelling === 2 }) } onClick={this._degree.bind(this, 2, 2) }>2</button>
-                        <button className={cx({ btn: true, 'btn-positive': this.props.Current.Spelling === 1 }) } onClick={this._degree.bind(this, 2, 1) }>1</button>
-                        <br />
-                        Meaning: <br />
-                        <button className={cx({ btn: true, 'btn-positive': this.props.Current.Meaning === 5 }) } onClick={this._degree.bind(this, 3, 5) }>5</button>
-                        <button className={cx({ btn: true, 'btn-positive': this.props.Current.Meaning === 4 }) } onClick={this._degree.bind(this, 3, 4) }>4</button>
-                        <button className={cx({ btn: true, 'btn-positive': this.props.Current.Meaning === 3 }) } onClick={this._degree.bind(this, 3, 3) }>3</button>
-                        <button className={cx({ btn: true, 'btn-positive': this.props.Current.Meaning === 2 }) } onClick={this._degree.bind(this, 3, 2) }>2</button>
-                        <button className={cx({ btn: true, 'btn-positive': this.props.Current.Meaning === 1 }) } onClick={this._degree.bind(this, 3, 1) }>1</button>
                     </div>
                 </div>
             );
@@ -574,3 +582,20 @@
 
     var cardEntity = React.render(<Card />, document.getElementById('card'));
 })();
+
+//{' '}
+//<button className="btn" onClick={this._toggleProp.bind(this, 'IsShowTestWord')}>Type Bar</button>
+//{' '}
+//<button className="btn" onClick={this._toggleProp.bind(this, 'IsShowSyllable')}>Syllable</button>
+//{' '}
+//<button className="btn" onClick={this._toggleProp.bind(this, 'IsShowDifficultyIndex')}>Difficulty Index</button>
+//{' '}
+//<button className="btn" onClick={this._toggleProp.bind(this, 'IsShowSpeakBtn')}>Speak Button</button>
+//{' '}
+//<button className="btn" onClick={this._toggleProp.bind(this, 'IsShowChartBasic')}>Explain Ratio</button>
+//{' '}
+//<button className="btn" onClick={this._toggleProp.bind(this, 'IsShowChartExamples')}>Part of Speech Ratio</button>
+//<a className="tab-item" href="javascript: void(0)" onClick={this._toggleProp.bind(this, 'IsShowImage')}>
+//    Image
+//</a>
+//<Avatars Current={this.props.Current} IsShowImage={this.props.IsShowImage} />
