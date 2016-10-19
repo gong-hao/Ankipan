@@ -322,7 +322,7 @@
 		},
         _archive: function () {
             $.ajax({
-                url: '/Api/Cihais/Archive?cihaiId=' + this.props.Current.CihaiId,
+                url: 'Json/' + core.groupName + '.json',
                 type: 'POST',
                 success: function () {
                     this.props.Current.Archive = !this.props.Current.Archive;
