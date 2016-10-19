@@ -32,7 +32,7 @@
         if (key.isDown) cardEntity._toggleProp('IsShowWord');
         if (key.isRight) cardEntity._move(1);
 
-		if (key.isEnter) cardEntity._move(1);
+        if (key.isEnter) cardEntity._move(1);
 
         if (key.isCtrl) cardEntity._speak();
         if (key.is1) cardEntity._speak('usenglishfemale');
@@ -41,7 +41,7 @@
         if (key.is4) cardEntity._speak('ukenglishmale');
         if (key.is5) cardEntity._speak('SSU');
 
-		if (key.isF9) cardEntity._shuffle();
+        if (key.isF9) cardEntity._shuffle();
 
         if (key.isEsc) cardEntity._archive();
     });
@@ -56,7 +56,7 @@
 
     function checkCode(e) {
         return {
-		    isEnter: e.keyCode === 13,
+            isEnter: e.keyCode === 13,
             isF2: e.keyCode === 113,
             isF9: e.keyCode === 120,
             isF10: e.keyCode === 121,
@@ -312,17 +312,17 @@
                 location.href = '#' + (index + 1);
             }
         },
-		_shuffle: function () {
-			var words = _.shuffle(this.props.Words);
-			var index = this._getIndex();
-			this.setProps({
-				Current: words[index],
+        _shuffle: function () {
+            var words = _.shuffle(this.props.Words);
+            var index = this._getIndex();
+            this.setProps({
+                Current: words[index],
                 Words: words
             });
-		},
+        },
         _archive: function () {
             $.ajax({
-                url: 'Json/' + core.groupName + '.json',
+                url: '/Api/Cihais/Archive?cihaiId=' + this.props.Current.CihaiId,
                 type: 'POST',
                 success: function () {
                     this.props.Current.Archive = !this.props.Current.Archive;
@@ -365,34 +365,34 @@
                 }.bind(this)
             });
         },
-		_getIndex: function () {
-			var index = 0;
+        _getIndex: function () {
+            var index = 0;
 
-			if (location.hash) {
-				var hashVal = location.hash.replace('#', '');
+            if (location.hash) {
+                var hashVal = location.hash.replace('#', '');
 
-				var isNumber = new RegExp(/\d/).test(hashVal);
+                var isNumber = new RegExp(/\d/).test(hashVal);
 
-				if (isNumber) {
-					index = hashVal - 1;
-				} else {
-					index = _.findIndex(words, function (x) {
-						return x.Word === hashVal;
-					});
+                if (isNumber) {
+                    index = hashVal - 1;
+                } else {
+                    index = _.findIndex(words, function (x) {
+                        return x.Word === hashVal;
+                    });
 
-					index = index === -1 ? 0 : index;
-				}
-			}
+                    index = index === -1 ? 0 : index;
+                }
+            }
 
-			return index;
-		},
+            return index;
+        },
         componentDidMount: function () {
             if (!core.groupName) {
                 return false;
             }
 
             $.ajax({
-                url: '/Api/Cihais/GetGroup?groupName=' + core.groupName + '&isIncludeArchive=' + core.isIncludeArchive,
+                url: 'Json/' + core.groupName + '.json',
                 type: 'GET',
                 success: function (data) {
                     if (data && data.length > 0) {
@@ -527,27 +527,6 @@
                                 <button className="btn" onClick={this._speak.bind(this, 'SSU')}>
                                     SSU
                                 </button>
-                            </div>
-                            <div style={{ 'textAlign': 'center', 'display': 'block' }}>
-                                <button className={cx({ btn: true, 'btn-positive': this.props.Current.Pronunciation === 5 })} onClick={this._degree.bind(this, 1, 5)}>P5</button>
-                                <button className={cx({ btn: true, 'btn-positive': this.props.Current.Pronunciation === 4 })} onClick={this._degree.bind(this, 1, 4)}>P4</button>
-                                <button className={cx({ btn: true, 'btn-positive': this.props.Current.Pronunciation === 3 })} onClick={this._degree.bind(this, 1, 3)}>P3</button>
-                                <button className={cx({ btn: true, 'btn-positive': this.props.Current.Pronunciation === 2 })} onClick={this._degree.bind(this, 1, 2)}>P2</button>
-                                <button className={cx({ btn: true, 'btn-positive': this.props.Current.Pronunciation === 1 })} onClick={this._degree.bind(this, 1, 1)}>P1</button>
-                                <br />
-                                <button className={cx({ btn: true, 'btn-positive': this.props.Current.Meaning === 5 })} onClick={this._degree.bind(this, 3, 5)}>M5</button>
-                                <button className={cx({ btn: true, 'btn-positive': this.props.Current.Meaning === 4 })} onClick={this._degree.bind(this, 3, 4)}>M4</button>
-                                <button className={cx({ btn: true, 'btn-positive': this.props.Current.Meaning === 3 })} onClick={this._degree.bind(this, 3, 3)}>M3</button>
-                                <button className={cx({ btn: true, 'btn-positive': this.props.Current.Meaning === 2 })} onClick={this._degree.bind(this, 3, 2)}>M2</button>
-                                <button className={cx({ btn: true, 'btn-positive': this.props.Current.Meaning === 1 })} onClick={this._degree.bind(this, 3, 1)}>M1</button>
-                                <br />
-                                <button className={cx({ btn: true, 'btn-positive': this.props.Current.Spelling === 5 })} onClick={this._degree.bind(this, 2, 5)}>S5</button>
-                                <button className={cx({ btn: true, 'btn-positive': this.props.Current.Spelling === 4 })} onClick={this._degree.bind(this, 2, 4)}>S4</button>
-                                <button className={cx({ btn: true, 'btn-positive': this.props.Current.Spelling === 3 })} onClick={this._degree.bind(this, 2, 3)}>S3</button>
-                                <button className={cx({ btn: true, 'btn-positive': this.props.Current.Spelling === 2 })} onClick={this._degree.bind(this, 2, 2)}>S2</button>
-                                <button className={cx({ btn: true, 'btn-positive': this.props.Current.Spelling === 1 })} onClick={this._degree.bind(this, 2, 1)}>S1</button>
-                                <br />
-                                <button className={cx({ btn: true, 'btn-positive': this.props.Current.Archive })} onClick={this._archive}>{this.props.Current.Archive ? 'Unarchiver' : 'Archive'}</button>
                             </div>
                             <Tester Current={this.props.Current} />
                             {dictionarys.map(function (dictionary, key) {
