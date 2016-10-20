@@ -255,7 +255,7 @@
             $scope.cardsE = [];
 
             $.ajax({
-                url: '/Json/' + core.groupName + '.json',
+                url: 'Json/' + core.groupName + '.json',
                 type: 'GET',
                 success: function (data) {
                     if (data && data.length > 0) {
