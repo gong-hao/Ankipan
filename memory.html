@@ -29,7 +29,8 @@
                  ng-style="GetStatus(card)"
                  ng-click="selectItem(card)"
                  ng-mouseenter="enterLink(card, $event)"
-                 ng-mouseleave="leaveLink(card, $event)">
+                 ng-mouseleave="leaveLink(card, $event)"
+                 ng-hide="card.mode == 'r' && card.match">
                 <span class="label label-success"
                       style="display:inline-block;width:25px"
                       ng-bind-template="{{card.type}}"></span>
@@ -53,7 +54,8 @@
                  ng-style="GetStatus(card)"
                  ng-click="selectItem(card)"
                  ng-mouseenter="enterLink(card, $event)"
-                 ng-mouseleave="leaveLink(card, $event)">
+                 ng-mouseleave="leaveLink(card, $event)"
+                 ng-hide="card.mode == 'r' && card.match">
                 <span class="label label-info"
                       style="display:inline-block;width:25px"
                       ng-bind-template="{{card.type}}"></span>
