@@ -1,0 +1,371 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>血輪眼</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <script src="/Scripts/jquery-1.10.2.min.js"></script>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+    <script src="/Scripts/jquery.querystring.js"></script>
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/Content/css/font-awesome.min.css" rel="stylesheet" />
+    <style>
+        h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+            font-family: '微軟正黑體';
+        }
+    </style>
+</head>
+<body ng-app="app" ng-controller="ctrl" ng-cloak>
+    <h1>血輪眼</h1>
+    <hr />
+
+    <div class="row">
+        <div class="col-xs-6">
+            <div class="thumbnail"
+                 style="float:left;width:150px;height:150px;display:inline-block;padding:5px;margin:5px;cursor:pointer"
+                 ng-repeat="card in cardsW"
+                 ng-style="GetStatus(card)"
+                 ng-click="selectItem(card)"
+                 ng-mouseenter="enterLink(card, $event)"
+                 ng-mouseleave="leaveLink(card, $event)">
+                <span class="label label-success"
+                      style="display:inline-block;width:25px"
+                      ng-bind-template="{{card.type}}"></span>
+                <span class="label label-danger"
+                      ng-show="card.error > 0"
+                      ng-bind-template="{{card.error}}"></span>
+                <h5 ng-bind-template="{{card.text}}" ng-hide="card.mode == 'w'"></h5>
+                <input type="text" class="form-control w"
+                       ng-model="card.input"
+                       ng-show="card.mode == 'w'"
+                       ng-focus="enterLink(card, $event)"
+                       ng-blur="leaveLink(card, $event)"
+                       ng-change="checkAnser(card)" />
+            </div>
+        </div>
+
+        <div class="col-xs-6">
+            <div class="thumbnail"
+                 style="float:left;width:150px;height:150px;display:inline-block;padding:5px;margin:5px;cursor:pointer"
+                 ng-repeat="card in cardsE"
+                 ng-style="GetStatus(card)"
+                 ng-click="selectItem(card)"
+                 ng-mouseenter="enterLink(card, $event)"
+                 ng-mouseleave="leaveLink(card, $event)">
+                <span class="label label-info"
+                      style="display:inline-block;width:25px"
+                      ng-bind-template="{{card.type}}"></span>
+                <span class="label label-danger"
+                      ng-show="card.error > 0"
+                      ng-bind-template="{{card.error}}"></span>
+                <h5 ng-bind-template="{{card.text}}" ng-hide="card.mode == 'e'"></h5>
+                <input type="text" class="form-control e"
+                       ng-model="card.input"
+                       ng-show="card.mode == 'e'"
+                       ng-focus="enterLink(card, $event)"
+                       ng-blur="leaveLink(card, $event)"
+                       ng-change="checkAnser(card)" />
+            </div>
+        </div>
+    </div>
+
+    <div class="clearfix"></div>
+    <hr />
+
+    <div ng-repeat="item in log">
+        <span ng-class="{ 'text-danger': !item.match, 'text-success': item.match }"
+              ng-bind-template="{{item.first.text}} - {{item.second.text}}"></span>
+    </div>
+
+    <audio id="combo">
+        <source src="/Audio/combo.mp3" type="audio/mpeg" />
+    </audio>
+    <audio id="miss">
+        <source src="/Audio/miss.mp3" type="audio/mpeg" />
+    </audio>
+    <audio id="clear">
+        <source src="/Audio/clear.mp3" type="audio/mpeg" />
+    </audio>
+    <audio id="win">
+        <source src="/Audio/win.mp3" type="audio/mpeg" />
+    </audio>
+    <audio id="start">
+        <source src="/Audio/start.mp3" type="audio/mpeg" />
+    </audio>
+
+    <script src="/Scripts/lodash.min.js"></script>
+    <script src="/Scripts/angular.js"></script>
+    <script>
+        var core = {
+            isSound: !!$.url.param('sound').toLowerCase(),
+            isIncludeArchive: !!$.url.param('all').toLowerCase(),
+            isAutoSpeak: !!$.url.param('as').toLowerCase(),
+            groupName: $.url.param('name').toLowerCase(),
+            mode: $.url.param('mode').toLowerCase() || 'r',
+            isCtrlDown: false,
+            isShiftlDown: false,
+            isAltDown: false
+        };
+
+        $(window).keydown(function (e) {
+            var key = checkCode(e);
+
+            if (key.isCtrl) core.isCtrlDown = true;
+            if (key.isShift) core.isShiftlDown = true;
+            if (key.isAlt) core.isAltDown = true;
+        });
+
+        $(window).keyup(function (e) {
+            var key = checkCode(e);
+
+            if (key.isCtrl) core.isCtrlDown = false;
+            if (key.isShift) core.isShiftlDown = false;
+            if (key.isAlt) core.isAltDown = false;
+        });
+
+        var app = angular.module('app', []);
+
+        app.controller('ctrl', ['$scope', '$timeout', function ($scope, $timeout) {
+            var selectedCard = [];
+
+            $scope.log = [];
+
+            $scope.checkAnser = function (card) {
+                if (card.input === '') {
+                    return false;
+                }
+
+                var pass = false;
+
+                if (core.mode === 'w') {
+                    pass = card.text === card.input;
+                }
+
+                if (core.mode === 'e') {
+                    pass = card.text.indexOf(card.input) !== -1;
+                }
+
+                if (pass) {
+                    //card.mode = 'r';
+
+                    card.match = true;
+
+                    card.linker.match = true;
+
+                    playAudio('clear');
+
+                    try {
+                        $('.' + core.mode).eq(this.$index + 1).focus();
+                    } catch (e) {
+
+                    }
+                }
+            };
+
+            $scope.enterLink = function (card, $event) {
+                if (($event.type === 'mouseenter' && core.isCtrlDown) || $event.type === 'focus') {
+                    card.showLink = true;
+
+                    card.linker.showLink = true;
+                }
+            };
+
+            $scope.leaveLink = function (card, $event) {
+                if ($event.type === 'mouseleave' && core.mode === 'r' || $event.type === 'blur') {
+                    card.showLink = false;
+
+                    card.linker.showLink = false;
+                }
+            };
+
+            $scope.GetStatus = function (card) {
+                var style = {};
+
+                if (card.match) {
+                    style['background-color'] = '#dff0d8';
+                }
+
+                if (!card.match && card.selected) {
+                    style['background-color'] = '#777';
+                }
+
+                if (card.showLink) {
+                    style['border-color'] = 'red';
+                }
+
+                return style;
+            };
+
+            $scope.selectItem = function (card) {
+                if (core.mode !== 'r') {
+                    return false;
+                }
+
+                if (card.type === 'W' && core.isAutoSpeak) {
+                    var msg = new SpeechSynthesisUtterance();
+
+                    msg.text = card.text;
+
+                    speechSynthesis.speak(msg);
+                }
+
+                if (card.selected || card.match) {
+                    return false;
+                }
+
+                card.selected = true;
+
+                selectedCard.push(card);
+
+                if (selectedCard.length === 2) {
+                    var isMatch = selectedCard[0].key === selectedCard[1].key;
+
+                    $scope.log.push({
+                        first: selectedCard[0].type === 'W' ? selectedCard[0] : selectedCard[1],
+                        second: selectedCard[0].type === 'E' ? selectedCard[0] : selectedCard[1],
+                        match: isMatch
+                    });
+
+                    if (isMatch) {
+                        selectedCard[0].match = true;
+
+                        selectedCard[1].match = true;
+
+                        playAudio('clear');
+                    } else {
+                        selectedCard[0].error++;
+
+                        selectedCard[1].error++;
+
+                        playAudio('miss');
+                    }
+
+                    selectedCard[0].selected = false;
+
+                    selectedCard[1].selected = false;
+
+                    selectedCard = [];
+                }
+            };
+
+            $scope.cardsW = [];
+
+            $scope.cardsE = [];
+
+            $.ajax({
+                url: '/Json/' + core.groupName + '.json',
+                type: 'GET',
+                success: function (data) {
+                    if (data && data.length > 0) {
+
+                        data = _.shuffle(data);
+
+                        var cardsW = [];
+
+                        var cardsE = [];
+
+                        for (var i = 0; i < data.length; i++) {
+                            var item = data[i];
+
+                            var w = {
+                                key: i,
+                                type: 'W',
+                                text: item.Word,
+                                error: 0,
+                                mode: core.mode
+                            };
+
+                            var e = {
+                                key: i,
+                                type: 'E',
+                                text: item.Explanations[0].Explanation,
+                                error: 0,
+                                mode: core.mode
+                            };
+
+                            w.linker = e;
+
+                            e.linker = w;
+
+                            cardsW.push(w);
+
+                            cardsE.push(e);
+                        }
+
+                        if (core.mode === 'r') {
+                            cardsW = _.shuffle(cardsW);
+
+                            cardsE = _.shuffle(cardsE);
+                        }
+
+                        $timeout(function () {
+                            $scope.cardsW = cardsW;
+
+                            $scope.cardsE = cardsE;
+                        });
+                    }
+                }
+            });
+        }]);
+
+        var comboAudio = $('#combo').get(0);
+
+        var missAudio = $('#miss').get(0);
+
+        var clearAudio = $('#clear').get(0);
+
+        var winAudio = $('#win').get(0);
+
+        var startAudio = $('#start').get(0);
+
+        function playAudio(name) {
+            var isMute = $.url.param("mute");
+
+            if (isMute) {
+                return false;
+            }
+
+            var targetAudio =
+                name === 'combo' ? comboAudio :
+                name === 'miss' ? missAudio :
+                name === 'clear' ? clearAudio :
+                name === 'win' ? winAudio :
+                name === 'start' ? startAudio : undefined;
+
+            if (targetAudio) {
+                targetAudio.currentTime = 0;
+
+                targetAudio.play();
+            }
+        };
+
+        function checkCode(e) {
+            return {
+                isF2: e.keyCode === 113,
+                isF9: e.keyCode === 120,
+                isF10: e.keyCode === 121,
+                isShift: e.keyCode === 16,
+                isCtrl: e.keyCode === 17,
+                isAlt: e.keyCode === 18,
+                isEsc: e.keyCode === 27,
+                isUp: e.keyCode === 38,
+                isDown: e.keyCode === 40,
+                isLeft: e.keyCode === 37,
+                isRight: e.keyCode === 39,
+                isQ: e.keyCode === 81,
+                isW: e.keyCode === 87,
+                isE: e.keyCode === 69,
+                isR: e.keyCode === 82,
+                is1: e.keyCode === 49,
+                is2: e.keyCode === 50,
+                is3: e.keyCode === 51,
+                is4: e.keyCode === 52,
+                is5: e.keyCode === 53,
+                isTilde: e.keyCode === 192
+            };
+        };
+    </script>
+</body>
+</html>
