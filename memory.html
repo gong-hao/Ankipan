@@ -6,11 +6,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <script src="/Scripts/jquery-1.10.2.min.js"></script>
+    <script src="Scripts/jquery-1.10.2.js"></script>
+    <script src="Scripts/jquery.querystring.js"></script>
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
-    <script src="/Scripts/jquery.querystring.js"></script>
     <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/Content/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="Content/css/font-awesome.min.css" rel="stylesheet" />
     <style>
         h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
             font-family: '微軟正黑體';
@@ -80,23 +80,23 @@
     </div>
 
     <audio id="combo">
-        <source src="/Audio/combo.mp3" type="audio/mpeg" />
+        <source src="Audio/combo.mp3" type="audio/mpeg" />
     </audio>
     <audio id="miss">
-        <source src="/Audio/miss.mp3" type="audio/mpeg" />
+        <source src="Audio/miss.mp3" type="audio/mpeg" />
     </audio>
     <audio id="clear">
-        <source src="/Audio/clear.mp3" type="audio/mpeg" />
+        <source src="Audio/clear.mp3" type="audio/mpeg" />
     </audio>
     <audio id="win">
-        <source src="/Audio/win.mp3" type="audio/mpeg" />
+        <source src="Audio/win.mp3" type="audio/mpeg" />
     </audio>
     <audio id="start">
-        <source src="/Audio/start.mp3" type="audio/mpeg" />
+        <source src="Audio/start.mp3" type="audio/mpeg" />
     </audio>
 
-    <script src="/Scripts/lodash.min.js"></script>
-    <script src="/Scripts/angular.js"></script>
+    <script src="Scripts/lodash.min.js"></script>
+    <script src="Scripts/angular.js"></script>
     <script>
         var core = {
             isSound: !!$.url.param('sound').toLowerCase(),
