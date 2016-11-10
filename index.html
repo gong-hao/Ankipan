@@ -1,161 +1,159 @@
 ﻿<!DOCTYPE html>
 
 <html>
+
 <head>
-    <title>單字快快背</title>
+  <title>單字快快背</title>
 
-    <!-- Sets initial viewport load and disables zooming  -->
-    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+  <!-- Sets initial viewport load and disables zooming  -->
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1">
 
-    <!-- Makes your prototype chrome-less once bookmarked to your phone's home screen -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <!-- Makes your prototype chrome-less once bookmarked to your phone's home screen -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
 
-    <!-- Include the compiled Ratchet CSS -->
-    <link href="Content/ratchet.css" rel="stylesheet" />
+  <!-- Include the compiled Ratchet CSS -->
+  <link href="Content/ratchet.css" rel="stylesheet" />
 
-    <style>
-        *, pre {
-            font-family: '微軟正黑體';
-        }
+  <style>
+    *,
+    pre {
+      font-family: '微軟正黑體';
+    }
 
-        hr {
-            border: none;
-            border-bottom: 1px solid #808080;
-            opacity: 0.7;
-        }
+    hr {
+      border: none;
+      border-bottom: 1px solid #808080;
+      opacity: 0.7;
+    }
 
-        pre {
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            overflow: hidden;
-        }
+    pre {
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      overflow: hidden;
+    }
 
-        .avatar-area {
-            text-align: center;
-            height: 125px;
-            overflow-x: auto;
-            overflow-y: hidden;
-            white-space: nowrap;
-        }
+    .avatar-area {
+      text-align: center;
+      height: 125px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      white-space: nowrap;
+    }
 
-        .avatar-list {
-            padding: 0;
-            margin: 0;
-            white-space: nowrap;
-        }
+    .avatar-list {
+      padding: 0;
+      margin: 0;
+      white-space: nowrap;
+    }
 
-        .avatar-item {
-            display: inline-block;
-        }
+    .avatar-item {
+      display: inline-block;
+    }
 
-            .avatar-item img {
-                height: 100px;
-            }
+    .avatar-item img {
+      height: 100px;
+    }
 
-        @media screen and (min-width: 640px) {
-            .avatar-area {
-                height: 360px;
-            }
+    @media screen and (min-width: 640px) {
+      .avatar-area {
+        height: 360px;
+      }
+      .avatar-item img {
+        height: 360px;
+      }
+    }
 
-            .avatar-item img {
-                height: 360px;
-            }
-        }
+    .star-ratings-sprite {
+      background: url("Images/star.png") repeat-x;
+      font-size: 0;
+      height: 21px;
+      line-height: 0;
+      overflow: hidden;
+      text-indent: -999em;
+      width: 220px;
+      margin: 10px auto;
+    }
 
-        .star-ratings-sprite {
-            background: url("Images/star.png") repeat-x;
-            font-size: 0;
-            height: 21px;
-            line-height: 0;
-            overflow: hidden;
-            text-indent: -999em;
-            width: 220px;
-            margin: 10px auto;
-        }
-
-            .star-ratings-sprite .rating {
-                background: url("Images/star.png") repeat-x;
-                background-position: 0 100%;
-                float: left;
-                height: 21px;
-                display: block;
-            }
-
-        /*.word-diff {
+    .star-ratings-sprite .rating {
+      background: url("Images/star.png") repeat-x;
+      background-position: 0 100%;
+      float: left;
+      height: 21px;
+      display: block;
+    }
+    /*.word-diff {
             text-shadow: 0px 0px 6px rgba(255,255,255,0.7);
         }*/
-    </style>
+  </style>
 
 
-    <script src="Scripts/lodash.js"></script>
-    <script src="echarts-2.2.1/echarts-all.js"></script>
+  <script src="Scripts/lodash.js"></script>
+  <script src="echarts-2.2.1/echarts-all.js"></script>
 
-    <!-- Include the compiled Ratchet JS -->
-    <script src="Scripts/ratchet.js"></script>
+  <!-- Include the compiled Ratchet JS -->
+  <script src="Scripts/ratchet.js"></script>
 
-    <script src="Scripts/react/JSXTransformer-0.12.2.js"></script>
-    <script src="Scripts/react/react-with-addons-0.12.2.js"></script>
+  <script src="Scripts/react/JSXTransformer-0.12.2.js"></script>
+  <script src="Scripts/react/react-with-addons-0.12.2.js"></script>
 
-    <script src="Scripts/jquery-1.10.2.js"></script>
-    <script src="Scripts/jquery.querystring.js"></script>
-    <script src="Scripts/jquery.mousewheel.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bluebird/3.4.6/bluebird.core.min.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/3.5.3/firebase.js"></script>
+  <script src="Scripts/jquery-1.10.2.js"></script>
+  <script src="Scripts/jquery.querystring.js"></script>
+  <script src="Scripts/jquery.mousewheel.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bluebird/3.4.6/bluebird.min.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/3.5.3/firebase.js"></script>
 </head>
+
 <body>
-    <div id="card"></div>
+  <div id="card"></div>
 
-    <audio id="tts"></audio>
-    <audio id="combo">
-        <source src="Audio/combo.mp3" type="audio/mpeg" />
-    </audio>
-    <audio id="miss">
-        <source src="Audio/miss.mp3" type="audio/mpeg" />
-    </audio>
-    <audio id="clear">
-        <source src="Audio/clear.mp3" type="audio/mpeg" />
-    </audio>
-    <audio id="win">
-        <source src="Audio/win.mp3" type="audio/mpeg" />
-    </audio>
-    <audio id="start">
-        <source src="Audio/start.mp3" type="audio/mpeg" />
-    </audio>
+  <audio id="tts"></audio>
+  <audio id="combo">
+    <source src="Audio/combo.mp3" type="audio/mpeg" />
+  </audio>
+  <audio id="miss">
+    <source src="Audio/miss.mp3" type="audio/mpeg" />
+  </audio>
+  <audio id="clear">
+    <source src="Audio/clear.mp3" type="audio/mpeg" />
+  </audio>
+  <audio id="win">
+    <source src="Audio/win.mp3" type="audio/mpeg" />
+  </audio>
+  <audio id="start">
+    <source src="Audio/start.mp3" type="audio/mpeg" />
+  </audio>
 
-    <script>
-        var core = {
-            isCtrlDown: false,
-            isShiftlDown: false,
-            isAltDown: false,
-            isMoveFlag: false,
-            isSound: !!$.url.param('sound').toLowerCase(),
-            isIncludeArchive: !!$.url.param('all').toLowerCase(),
-            isAutoSpeak: !!$.url.param('as').toLowerCase(),
-            groupName: $.url.param('name').toLowerCase(),
-            mode: $.url.param('mode').toLowerCase(),
-            msg: function (msg) {
-                alert(msg);
-            }
-        };
+  <script>
+    var core = {
+        isCtrlDown: false,
+        isShiftlDown: false,
+        isAltDown: false,
+        isMoveFlag: false,
+        isSound: !!$.url.param('sound').toLowerCase(),
+        isIncludeArchive: !!$.url.param('all').toLowerCase(),
+        isAutoSpeak: !!$.url.param('as').toLowerCase(),
+        groupName: $.url.param('name').toLowerCase(),
+        mode: $.url.param('mode').toLowerCase(),
+        msg: function (msg) {
+            alert(msg);
+        }
+    };
 
-        var comboAudio = $('#combo').get(0);
+    var comboAudio = $('#combo').get(0);
 
-        var missAudio = $('#miss').get(0);
+    var missAudio = $('#miss').get(0);
 
-        var clearAudio = $('#clear').get(0);
+    var clearAudio = $('#clear').get(0);
 
-        var winAudio = $('#win').get(0);
+    var winAudio = $('#win').get(0);
 
-        var startAudio = $('#start').get(0);
+    var startAudio = $('#start').get(0);
 
-        function playAudio(name) {
-            var isMute = $.url.param("mute");
+    function playAudio(name) {
+        var isSound = $.url.param("sound");
 
-            if (isMute) {
-                return false;
-            }
-
+        if (isSound) {
             var targetAudio =
                 name === 'combo' ? comboAudio :
                 name === 'miss' ? missAudio :
@@ -168,10 +166,12 @@
 
                 targetAudio.play();
             }
-        };
+        }
+    };
     </script>
 
-    <script src="Card/jsx/app.jsx" type="text/jsx"></script>
-    <script src="Card/Speaker.js"></script>
+  <script src="Card/jsx/app.jsx" type="text/jsx"></script>
+  <script src="Card/Speaker.js"></script>
 </body>
+
 </html>

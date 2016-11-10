@@ -21,6 +21,7 @@
     { name: 'cambridge', url: 'http://dictionary.cambridge.org/dictionary/english/' },
     { name: 'dictionary', url: 'http://www.dictionary.com/browse/' },
     { name: 'merriam-webster', url: 'http://www.merriam-webster.com/dictionary/' },
+    { name: 'learner\'s dictionary', url: 'http://learnersdictionary.com/definition/' },
     { name: 'longman', url: 'http://www.ldoceonline.com/search/?q=' },
     { name: 'oxford', url: 'http://www.oxforddictionaries.com/definition/american_english/' },
     { name: 'macmillan', url: 'http://www.macmillandictionary.com/dictionary/british/' },
@@ -380,6 +381,20 @@
           });
         }.bind(this));
     },
+    _getAllMetadata: function (words) {
+      return Promise.map(words, function (word) {
+        return this._getOrInit(word.Word);
+      }.bind(this)).then(function (allWords) {
+        var _words = [];
+        for (var index = 0; index < allWords.length; index++) {
+          var _word = allWords[index];
+          if (core.isIncludeArchive || (!core.isIncludeArchive && !_word.archive)) {
+            _words.push(words[index]);
+          }
+        }
+        return _words;
+      });
+    },
     _getOrInit: function (_currentWord) {
       var currentWord = _currentWord ? _currentWord : this.props.Current.Word;
       return new Promise(function (resolve, reject) {
@@ -449,6 +464,35 @@
       }
       return index;
     },
+    _init: function (words, index) {
+      var mode = getMode();
+
+      this._getAllMetadata(words).then(function (_words) {
+        this.setProps({
+          IsShowWord: mode.isShowWord,
+          IsShowExplain: mode.isShowExplain,
+          Index: index,
+          Current: _words[index],
+          Words: _words
+        });
+
+        this._getOrInit(this.props.Words[index].Word)
+          .then(function (metadata) {
+            this.setProps({
+              Metadata: metadata
+            });
+          }.bind(this))
+          .then(function (metadata) {
+            this._counter('view');
+          }.bind(this));
+
+        setTimeout(function () {
+          if (core.isAutoSpeak) {
+            this._speak(core.speaker.voice);
+          }
+        }.bind(this), 50);
+      }.bind(this));
+    },
     componentDidMount: function () {
       if (!core.groupName) {
         return false;
@@ -463,31 +507,7 @@
 
             var index = this._getIndex();
 
-            var mode = getMode();
-
-            this.setProps({
-              IsShowWord: mode.isShowWord,
-              IsShowExplain: mode.isShowExplain,
-              Index: index,
-              Current: words[index],
-              Words: words
-            });
-
-            this._getOrInit(this.props.Words[index].Word)
-              .then(function (metadata) {
-                this.setProps({
-                  Metadata: metadata
-                });
-              }.bind(this))
-              .then(function (metadata) {
-                this._counter('view');
-              }.bind(this));
-
-            setTimeout(function () {
-              if (core.isAutoSpeak) {
-                this._speak(core.speaker.voice);
-              }
-            }.bind(this), 50);
+            this._init(words, index);
           } else {
             core.msg('group not found');
           }
@@ -561,7 +581,7 @@
         <div>
           <header className="bar bar-nav" style={headerStyle}>
             <h1 className="title" style={titleStyle}>
-              {this.props.Index + 1} / {this.props.Words.length}
+              {this.props.Index + 1}/ {this.props.Words.length}
             </h1>
           </header>
           <nav className="bar bar-tab">
