@@ -677,14 +677,14 @@
                 <button className={cx({ btn: true, 'btn-positive': this.props.Metadata.archive })} onClick={this._archive}>{this.props.Metadata.archive ? 'Unarchiver' : 'Archive'}</button>
               </div>
               <Tester Current={this.props.Current} />
-              {dictionarys.map(function (dictionary, key) {
-                return (
-                  <span key={dictionary.name}>
-                    <a className="badge badge-info" target="_blank" href={dictionary.url + this.props.Current.Word}>{dictionary.name}</a>
-                  </span>
-                );
-              }, this)}
             </div>
+            {dictionarys.map(function (dictionary, key) {
+              return (
+                <span key={dictionary.name}>
+                  <a className="badge badge-info" target="_blank" href={dictionary.url + this.props.Current.Word}>{dictionary.name}</a>
+                </span>
+              );
+            }, this)}
             <hr />
             <div style={{ 'display': (this.props.IsShowExplain ? 'block' : 'none') }}>
               {explanations}
