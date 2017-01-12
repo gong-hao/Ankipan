@@ -259,10 +259,10 @@
             _.cloneDeep(cardEntity.props.Words).filter(function (x) {
               return x.Word !== cardEntity.props.Current.Word
             })
-              .map(function (x) { return { Explanation: x.Explanations[0].Explanation, IsAnswer: false }; })
+              .map(function (x) { return { Explanation: x.Explanations.length > 0 ? x.Explanations[0].Explanation : '', IsAnswer: false }; })
           )
             .slice(0, 5)
-            .concat({ Explanation: cardEntity.props.Current.Explanations[0].Explanation, IsAnswer: true })
+            .concat({ Explanation: cardEntity.props.Current.Explanations.length > 0 ? cardEntity.props.Current.Explanations[0].Explanation : '', IsAnswer: true })
         );
         var questions = randomExplanations.map(function (exp, key) {
           return (
